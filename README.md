@@ -1,87 +1,105 @@
-# Student Attendance Management System
+# Student-Faculty Attendance Management System
 
-A Flask-based web application for managing student attendance with MySQL database integration.
+A web-based attendance management system built with Flask and MySQL, featuring separate interfaces for students and faculty members.
 
 ## Features
 
-- Faculty Management
-- Student Management
-- Attendance Tracking
-- Secure Authentication
-- Reports Generation
+- **Login System**
+  - Separate login for students and faculty
+  - Session management
+  - Secure authentication
 
-## Tech Stack
+- **Faculty Features**
+  - Take attendance for classes
+  - Edit previous attendance records
+  - View attendance reports (class-wise and individual)
+  - Interactive dashboard
 
-- Python 3.8+
-- Flask 2.0.1
-- MySQL
-- Bootstrap 5
+- **Student Features**
+  - View attendance percentage for all subjects
+  - Progress bar with color indicators
+  - Detailed attendance history
+
+## Prerequisites
+
+- Python 3.8 or higher
+- MySQL Server
+- MySQL Workbench (for database setup)
 
 ## Installation
 
-1. Clone the repository
+1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/student-attendance.git
+git clone <repository-url>
 cd student-attendance
 ```
 
-2. Create virtual environment
+2. Create a virtual environment and activate it:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. Install dependencies
+3. Install the required packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Set up environment variables in `.env`:
+4. Set up the MySQL database:
+   - Open MySQL Workbench
+   - Execute the SQL commands provided in the database setup section
+   - Update the MySQL configuration in `app.py` with your credentials
+
+5. Create a `.env` file in the project root:
 ```
-MYSQL_HOST=your_host
-MYSQL_PORT=3306
-MYSQL_USER=your_user
+MYSQL_HOST=localhost
+MYSQL_USER=your_username
 MYSQL_PASSWORD=your_password
-MYSQL_DB=your_database
-FLASK_ENV=development
-FLASK_APP=app.py
+MYSQL_DB=attendance
 ```
 
-5. Initialize database and add test data
+## Database Setup
+
+The database setup SQL commands are already executed. The database includes:
+- Tables for students, faculty, subjects, classes, and attendance
+- Sample data for testing
+- Foreign key relationships for data integrity
+
+## Running the Application
+
+1. Activate the virtual environment if not already activated:
+```bash
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+2. Run the Flask application:
 ```bash
 python app.py
-python init_data.py
 ```
 
-## Test Credentials
+3. Access the application at `http://localhost:5000`
+
+## Usage
 
 ### Faculty Login
-- Username: rajesh_k
-- Password: password123
+- Use faculty name as username
+- Access the dashboard to manage attendance
+- Take attendance for classes
+- Edit previous attendance records
+- View detailed reports
 
 ### Student Login
-- USN: 1SI20IS001
-- Password: password123
-
-## Project Structure
-
-```
-student-attendance/
-├── app.py              # Main application file
-├── init_data.py        # Database initialization script
-├── requirements.txt    # Python dependencies
-├── flask_app.py        # WSGI entry point
-├── templates/          # HTML templates
-└── static/            # Static files (CSS, JS, images)
-```
+- Use USN as username
+- View attendance percentage for all subjects
+- Check attendance status with color-coded indicators
+- Track attendance history
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a new branch
+3. Make your changes
+4. Submit a pull request
 
 ## License
 
