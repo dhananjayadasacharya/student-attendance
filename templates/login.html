@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4 class="mb-0">Login</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="user-type-selector mb-4">
+                        <button type="button" class="user-type-option student selected" onclick="selectUserType('student')">
+                            <i class="fas fa-user-graduate me-2"></i>Student
+                        </button>
+                        <button type="button" class="user-type-option faculty" onclick="selectUserType('faculty')">
+                            <i class="fas fa-chalkboard-teacher me-2"></i>Faculty
+                        </button>
+                    </div>
+                    <input type="hidden" name="user_type" id="user_type" value="student">
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label" id="username_label">USN</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-id-card"></i>
+                            </span>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function selectUserType(type) {
+    const studentBtn = document.querySelector('.user-type-option.student');
+    const facultyBtn = document.querySelector('.user-type-option.faculty');
+    const usernameLabel = document.getElementById('username_label');
+    const userTypeInput = document.getElementById('user_type');
+    
+    if (type === 'student') {
+        studentBtn.classList.add('selected');
+        facultyBtn.classList.remove('selected');
+        usernameLabel.textContent = 'USN';
+        userTypeInput.value = 'student';
+    } else {
+        facultyBtn.classList.add('selected');
+        studentBtn.classList.remove('selected');
+        usernameLabel.textContent = 'Username';
+        userTypeInput.value = 'faculty';
+    }
+}
+</script>
+{% endblock %} 

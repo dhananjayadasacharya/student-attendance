@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Faculty Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>Welcome, {{ session.get('name') }}</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Take Attendance</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('take_attendance') }}" method="GET">
+                    <div class="mb-3">
+                        <label for="subject_id" class="form-label">Select Subject</label>
+                        <select class="form-select" id="subject_id" name="subject_id" required>
+                            <option value="">Choose Subject</option>
+                            {% set unique_subjects = {} %}
+                            {% for subject in subjects %}
+                                {% if subject.subject_id not in unique_subjects %}
+                                    <option value="{{ subject.subject_id }}">{{ subject.subject_name }}</option>
+                                    {% set _ = unique_subjects.update({subject.subject_id: 1}) %}
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="class_id" class="form-label">Select Class</label>
+                        <select class="form-select" id="class_id" name="class_id" required disabled>
+                            <option value="">Choose Class</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Take Attendance</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Edit Attendance</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('edit_attendance') }}" method="GET">
+                    <div class="mb-3">
+                        <label for="edit_subject_id" class="form-label">Select Subject</label>
+                        <select class="form-select" id="edit_subject_id" name="subject_id" required>
+                            <option value="">Choose Subject</option>
+                            {% set unique_subjects = {} %}
+                            {% for subject in subjects %}
+                                {% if subject.subject_id not in unique_subjects %}
+                                    <option value="{{ subject.subject_id }}">{{ subject.subject_name }}</option>
+                                    {% set _ = unique_subjects.update({subject.subject_id: 1}) %}
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_class_id" class="form-label">Select Class</label>
+                        <select class="form-select" id="edit_class_id" name="class_id" required disabled>
+                            <option value="">Choose Class</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Select Date</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-warning">Edit Attendance</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">View Reports</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('view_reports') }}" method="GET">
+                    <div class="mb-3">
+                        <label for="report_subject_id" class="form-label">Select Subject</label>
+                        <select class="form-select" id="report_subject_id" name="subject_id" required>
+                            <option value="">Choose Subject</option>
+                            {% set unique_subjects = {} %}
+                            {% for subject in subjects %}
+                                {% if subject.subject_id not in unique_subjects %}
+                                    <option value="{{ subject.subject_id }}">{{ subject.subject_name }}</option>
+                                    {% set _ = unique_subjects.update({subject.subject_id: 1}) %}
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="report_class_id" class="form-label">Select Class</label>
+                        <select class="form-select" id="report_class_id" name="class_id" required disabled>
+                            <option value="">Choose Class</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="report_type" value="class">
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-info">View Report</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Function to populate class dropdown based on selected subject
+function populateClassDropdown(subjectId, classDropdownId) {
+    const classDropdown = document.getElementById(classDropdownId);
+    classDropdown.innerHTML = '<option value="">Choose Class</option>';
+    classDropdown.disabled = true;
+
+    if (!subjectId) return;
+
+    const classes = [];
+    {% for subject in subjects %}
+    if ('{{ subject.subject_id }}' === subjectId) {
+        classes.push({
+            id: '{{ subject.class_id }}',
+            name: '{{ subject.class_name }}'
+        });
+    }
+    {% endfor %}
+
+    if (classes.length > 0) {
+        classes.forEach(cls => {
+            const option = document.createElement('option');
+            option.value = cls.id;
+            option.textContent = cls.name;
+            classDropdown.appendChild(option);
+        });
+        classDropdown.disabled = false;
+    }
+}
+
+// Event listeners for subject dropdowns
+document.getElementById('subject_id').addEventListener('change', function() {
+    populateClassDropdown(this.value, 'class_id');
+});
+
+document.getElementById('edit_subject_id').addEventListener('change', function() {
+    populateClassDropdown(this.value, 'edit_class_id');
+});
+
+document.getElementById('report_subject_id').addEventListener('change', function() {
+    populateClassDropdown(this.value, 'report_class_id');
+});
+
+// Set minimum date to today for the date input
+document.getElementById('date').valueAsDate = new Date();
+</script>
+{% endblock %} 

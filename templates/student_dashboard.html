@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>Welcome, {{ session.get('name') }}</h2>
+        <p class="text-muted">USN: {{ session.get('usn') }}</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for subject in attendance_data %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">{{ subject.subject_name }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h6>Total Classes</h6>
+                            <h3>{{ subject.total_classes }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">
+                            <h6>Attended</h6>
+                            <h3>{{ subject.present_count }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress mb-3">
+                    <div class="progress-bar attendance {% if subject.attendance_percentage >= 75 %}bg-success{% else %}bg-danger{% endif %}"
+                         role="progressbar"
+                         style="width: {{ subject.attendance_percentage }}%"
+                         aria-valuenow="{{ subject.attendance_percentage }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                        {{ "%.1f"|format(subject.attendance_percentage) }}%
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        {% if subject.attendance_percentage >= 75 %}
+                        You're doing great! Keep it up!
+                        {% else %}
+                        Your attendance is below 75%. Please improve your attendance.
+                        {% endif %}
+                    </small>
+                </div>
+                
+                <!-- Absent Dates -->
+                <div class="mt-3">
+                    <h6>Absent Dates:</h6>
+                    <div class="absent-dates" style="max-height: 150px; overflow-y: auto;">
+                        {% set found = false %}
+                        {% for absent in absent_dates %}
+                            {% if absent.subject_name == subject.subject_name %}
+                                {% set found = true %}
+                                <div class="alert alert-danger py-1 mb-2">
+                                    {{ absent.date.strftime('%d %b %Y') }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not found %}
+                            <p class="text-muted small">No absences recorded</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 
