@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
 from datetime import datetime
-from pythonanywhere_config import MYSQL_CONFIG, APP_CONFIG
 
 app = Flask(__name__)
 
@@ -12,17 +11,21 @@ app = Flask(__name__)
 load_dotenv()
 
 # MySQL Configuration
-app.config.update(MYSQL_CONFIG)
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '#1Parandhama'
+app.config['MYSQL_DB'] = 'attendance'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 # Initialize MySQL
 mysql = MySQL(app)
 
 # Secret key for session
-app.secret_key = APP_CONFIG['SECRET_KEY']
+app.secret_key = os.urandom(24)
 
 @app.route('/')
 def index():
-    return render_template('login.html')
+    return render_template('welcome.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
