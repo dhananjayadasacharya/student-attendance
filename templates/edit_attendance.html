@@ -3,89 +3,166 @@
 {% block title %}Edit Attendance{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col">
-        <h2>Edit Attendance</h2>
-        <h4 class="text-muted">
-            {{ class_info.subject_name }} - {{ class_info.class_name }}
-        </h4>
-        <p class="text-muted">Date: {{ date }}</p>
-    </div>
+<div class="dashboard-header">
+    <h1>Edit Attendance</h1>
+    <p>{{ class_info.subject_name }}</p>
+    <p>{{ class_info.class_name }}</p>
+    <p>{{ date }}</p>
 </div>
 
-<div class="row">
-    <div class="col">
-        <div class="card">
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('edit_attendance') }}">
-                    <input type="hidden" name="subject_id" value="{{ subject_id }}">
-                    <input type="hidden" name="class_id" value="{{ class_id }}">
-                    <input type="hidden" name="date" value="{{ date }}">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>USN</th>
-                                    <th>Name</th>
-                                    <th class="text-center">Attendance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for student in students %}
-                                <tr>
-                                    <td>{{ student.usn }}</td>
-                                    <td>{{ student.name }}</td>
-                                    <td class="text-center">
-                                        <div class="attendance-status">
-                                            <button type="button" class="attendance-option present {% if student.status == 'Present' %}selected{% endif %}" 
-                                                    onclick="toggleAttendance('{{ student.stu_id }}', 'present')">
-                                                <i class="fas fa-check me-1"></i><span>Present</span>
-                                            </button>
-                                            <button type="button" class="attendance-option absent {% if student.status == 'Absent' %}selected{% endif %}"
-                                                    onclick="toggleAttendance('{{ student.stu_id }}', 'absent')">
-                                                <i class="fas fa-times me-1"></i><span>Absent</span>
-                                            </button>
-                                        </div>
-                                        <input type="checkbox" name="attendance" value="{{ student.stu_id }}" 
-                                               id="student_{{ student.stu_id }}" 
-                                               {% if student.status == 'Present' %}checked{% endif %} 
-                                               style="display: none;">
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{{ url_for('faculty_dashboard') }}" class="btn btn-secondary me-md-2">
-                            <i class="fas fa-times me-1"></i>Cancel
-                        </a>
-                        <button type="submit" class="btn btn-warning">
-                            <i class="fas fa-save me-1"></i>Update Attendance
-                        </button>
-                    </div>
-                </form>
+<div class="mb-5"></div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <form method="POST" action="{{ url_for('edit_attendance') }}">
+            <input type="hidden" name="subject_id" value="{{ subject_id }}">
+            <input type="hidden" name="class_id" value="{{ class_id }}">
+            <input type="hidden" name="date" value="{{ date }}">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="px-4">USN</th>
+                            <th>Name</th>
+                            <th class="text-center" style="width: 200px;">Attendance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td class="px-4">{{ student.usn }}</td>
+                            <td>{{ student.name }}</td>
+                            <td class="text-center">
+                                <div class="attendance-toggle">
+                                    <button type="button" class="attendance-btn present {% if student.status == 'Present' %}active{% endif %}" 
+                                            onclick="toggleAttendance('{{ student.stu_id }}', 'present')"
+                                            data-student-id="{{ student.stu_id }}">
+                                        <i class="fas fa-check"></i>
+                                        <span>Present</span>
+                                    </button>
+                                    <button type="button" class="attendance-btn absent {% if student.status == 'Absent' %}active{% endif %}"
+                                            onclick="toggleAttendance('{{ student.stu_id }}', 'absent')"
+                                            data-student-id="{{ student.stu_id }}">
+                                        <i class="fas fa-times"></i>
+                                        <span>Absent</span>
+                                    </button>
+                                </div>
+                                <input type="checkbox" name="attendance" value="{{ student.stu_id }}" 
+                                       id="student_{{ student.stu_id }}" 
+                                       {% if student.status == 'Present' %}checked{% endif %} 
+                                       style="display: none;">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-        </div>
+            <div class="p-4 border-top">
+                <div class="d-flex justify-content-end gap-3">
+                    <a href="{{ url_for('faculty_dashboard') }}" class="btn btn-light">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-warning text-white">
+                        <i class="fas fa-save me-2"></i>Update Attendance
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
+<br><br>
+<style>
+.attendance-toggle {
+    display: inline-flex;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    padding: 2px;
+}
+
+.attendance-btn {
+    border: none;
+    background: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.attendance-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.attendance-btn.present.active {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.attendance-btn.absent.active {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.table > :not(caption) > * > * {
+    padding: 1rem;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: var(--background-color);
+}
+
+@media (max-width: 768px) {
+    .attendance-btn span {
+        display: none;
+    }
+    
+    .attendance-btn {
+        padding: 8px;
+    }
+    
+    .attendance-btn i {
+        margin: 0;
+        font-size: 1.1em;
+    }
+}
+</style>
 
 <script>
 function toggleAttendance(studentId, status) {
     const checkbox = document.getElementById('student_' + studentId);
     const row = checkbox.closest('tr');
-    const presentBtn = row.querySelector('.attendance-option.present');
-    const absentBtn = row.querySelector('.attendance-option.absent');
+    const presentBtn = row.querySelector('.attendance-btn.present');
+    const absentBtn = row.querySelector('.attendance-btn.absent');
     
     if (status === 'present') {
         checkbox.checked = true;
-        presentBtn.classList.add('selected');
-        absentBtn.classList.remove('selected');
+        presentBtn.classList.add('active');
+        absentBtn.classList.remove('active');
     } else {
         checkbox.checked = false;
-        presentBtn.classList.remove('selected');
-        absentBtn.classList.add('selected');
+        presentBtn.classList.remove('active');
+        absentBtn.classList.add('active');
     }
+}
+
+function markAllPresent() {
+    document.querySelectorAll('.attendance-btn.present').forEach(btn => {
+        const studentId = btn.dataset.studentId;
+        toggleAttendance(studentId, 'present');
+    });
+}
+
+function markAllAbsent() {
+    document.querySelectorAll('.attendance-btn.absent').forEach(btn => {
+        const studentId = btn.dataset.studentId;
+        toggleAttendance(studentId, 'absent');
+    });
 }
 </script>
 {% endblock %} 

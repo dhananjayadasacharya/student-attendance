@@ -6,136 +6,422 @@
     <title>{% block title %}{% endblock %} - Attendance System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary-color: #10B981;
+            --danger-color: #EF4444;
+            --background-color: #F9FAFB;
+            --card-background: #FFFFFF;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            background-image: url('/static/background_image.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        body.welcome-page .navbar {
+            background-color: transparent !important;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            box-shadow: none;
+        }
+
+        body.welcome-page .navbar-brand {
+            color: white !important;
+        }
+
+        body.welcome-page .navbar-brand i {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 0.5rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .container {
+            padding-top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            padding: 0;
+            text-decoration: none;
+            height: auto;
+        }
+
+        .navbar-brand span {
+            display: inline-block;
+        }
+
+        .navbar-brand i {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        .main-container {
+            padding-top: 80px;
+            min-height: calc(100vh - 60px);
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .dashboard-header {
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0.25rem;
+        }
+
+        .login-container {
+            min-height: calc(100vh - 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 0;
+            margin-top: -20px;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .logout-btn {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: transparent;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--danger-color) !important;
+            border-color: var(--danger-color) !important;
+            color: white !important;
+        }
+
         .flash-container {
             position: fixed;
             top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 20px;
             z-index: 1050;
             min-width: 300px;
+            pointer-events: none;
         }
+
         .flash-message {
             margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            animation: fadeOut 0.5s ease-in-out 3s forwards;
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; visibility: hidden; }
-        }
-        .navbar {
-            background-color: #28a745 !important;
-        }
-        .logout-btn {
-            color: white;
-            border-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateX(100%);
             transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            pointer-events: auto;
         }
-        .logout-btn:hover {
-            background-color: #dc3545 !important;
-            border-color: #dc3545 !important;
-            color: white !important;
+
+        .flash-message.alert-danger {
+            border-left: 4px solid var(--danger-color);
         }
+
+        .flash-message.alert-success {
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .flash-message.alert-info {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .flash-message.alert-warning {
+            border-left: 4px solid #fbbf24;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); visibility: hidden; }
+        }
+
         .attendance-status {
             display: inline-flex;
-            border: 2px solid #ddd;
-            border-radius: 4px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
             overflow: hidden;
         }
+
         .attendance-option {
-            padding: 8px 16px;
+            padding: 0.5rem 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
+            transition: all 0.2s ease;
+            background: var(--card-background);
             border: none;
             outline: none;
+            font-weight: 500;
         }
+
         .attendance-option.present {
-            color: #28a745;
+            color: var(--secondary-color);
         }
+
         .attendance-option.absent {
-            color: #dc3545;
+            color: var(--danger-color);
         }
+
         .attendance-option.present.selected {
-            background: #28a745;
-            color: white;
-        }
-        .attendance-option.absent.selected {
-            background: #dc3545;
-            color: white;
-        }
-        .alert {
-            transition: opacity 0.5s ease-in-out;
-        }
-        .alert.fade-out {
-            opacity: 0;
-        }
-        .user-type-selector {
-            display: flex;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-        .user-type-option {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-            border: none;
-            outline: none;
-        }
-        .user-type-option.selected {
-            background: #28a745;
+            background: var(--secondary-color);
             color: white;
         }
 
-        /* Responsive styles for attendance buttons */
+        .attendance-option.absent.selected {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .table {
+            background-color: var(--card-background);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table th {
+            background-color: var(--background-color);
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table td {
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 0.625rem 1rem;
+            transition: all 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+            background-color: white;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .input-group .form-control {
+            border-radius: 12px;
+        }
+
+        .input-group .input-group-text {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-secondary);
+            padding: 0.625rem 1rem;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .input-group:focus-within {
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .input-group .form-control:focus {
+            box-shadow: none;
+        }
+
+        .input-group .form-control,
+        .input-group .input-group-text {
+            transition: all 0.2s ease;
+        }
+
         @media (max-width: 576px) {
+            .main-container {
+                padding-top: 50px;
+            }
+
+            .navbar {
+                padding: 0.25rem 0;
+            }
+
+            .navbar-brand span {
+                display: none;
+            }
+
+            .navbar-brand i {
+                font-size: 1.3rem;
+                margin-right: 0;
+            }
+
+            .dashboard-header {
+                margin-top: -30px;
+                padding-top: 0;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .dashboard-header p {
+                font-size: 1rem;
+            }
+
+            .login-container {
+                min-height: calc(100vh - 50px);
+                padding: 0;
+            }
+
+            .card {
+                border-radius: 8px;
+            }
+
             .attendance-option {
-                padding: 6px;
+                padding: 0.5rem;
                 width: 40px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                transform: none !important;
             }
+
+            .attendance-toggle {
+                width: 100%;
+                justify-content: center;
+            }
+
             .attendance-option span {
                 display: none;
             }
+
             .attendance-option i {
                 margin: 0 !important;
                 font-size: 1.2em;
             }
-            .table td {
-                padding: 0.5rem;
-            }
-            .table th {
-                padding: 0.5rem;
-                font-size: 0.9em;
-            }
-            .attendance-status {
-                min-width: unset;
-                display: flex;
-                justify-content: center;
+
+            .table td, .table th {
+                padding: 0.75rem;
+                font-size: 0.875rem;
             }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-clipboard-check me-2"></i>
-                Attendance System
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Attendance System</span>
             </a>
-            {% if session.get('user_id') %}
-            <div class="ms-auto">
-                <a href="{{ url_for('logout') }}" class="btn logout-btn btn-outline-light">
+            {% if session.get('user_id') and not request.endpoint in ['login', 'index'] %}
+            <div class="ms-auto d-flex align-items-center">
+                <span class="me-3 text-secondary">
+                    <i class="fas fa-user me-1"></i>
+                    {{ session.get('name', '') }}
+                </span>
+                <a href="{{ url_for('logout') }}" class="btn logout-btn">
                     <i class="fas fa-sign-out-alt me-1"></i>
                     Logout
                 </a>
@@ -148,7 +434,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="flash-message alert alert-{{ category if category != 'message' else 'info' }}">
+                    <div class="flash-message alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -156,10 +442,31 @@
         {% endwith %}
     </div>
 
-    <div class="container mt-4">
+    <main class="main-container">
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-dismiss flash messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            let flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(message) {
+                // Show message with fade in
+                message.style.opacity = '1';
+                message.style.transform = 'translateX(0)';
+                
+                // Remove message after 5 seconds
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(100%)';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
+    </script>
 </body>
-</html> 
+</html>

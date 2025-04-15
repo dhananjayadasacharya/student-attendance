@@ -3,73 +3,146 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
+<div class="login-container">
+    <div class="col-md-6 col-lg-5 px-3">
         <div class="card">
-            <div class="card-header text-center">
-                <h4 class="mb-0">Login</h4>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('login') }}">
-                    <div class="user-type-selector mb-4">
-                        <button type="button" class="user-type-option student selected" onclick="selectUserType('student')">
-                            <i class="fas fa-user-graduate me-2"></i>Student
-                        </button>
-                        <button type="button" class="user-type-option faculty" onclick="selectUserType('faculty')">
-                            <i class="fas fa-chalkboard-teacher me-2"></i>Faculty
-                        </button>
-                    </div>
-                    <input type="hidden" name="user_type" id="user_type" value="student">
-                    
-                    <div class="mb-3">
-                        <label for="username" class="form-label" id="username_label">USN</label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-id-card"></i>
-                            </span>
-                            <input type="text" class="form-control" id="username" name="username" required>
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Login</h2>
+                <form method="POST">
+                    <div class="user-type-toggle mb-4">
+                        <div class="toggle-container">
+                            <input type="radio" id="student" name="user_type" value="student" checked>
+                            <input type="radio" id="faculty" name="user_type" value="faculty">
+                            <label for="student" class="toggle-option student">
+                                <i class="fas fa-user-graduate me-2"></i>Student
+                            </label>
+                            <label for="faculty" class="toggle-option faculty">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>Faculty
+                            </label>
+                            <div class="slider"></div>
                         </div>
                     </div>
-                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input type="text" class="form-control" id="username" name="username" required placeholder="Enter your username">
+                        </div>
+                    </div>
                     <div class="mb-4">
                         <label for="password" class="form-label">Password</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fas fa-lock"></i>
                             </span>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
                         </div>
                     </div>
-                    
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-function selectUserType(type) {
-    const studentBtn = document.querySelector('.user-type-option.student');
-    const facultyBtn = document.querySelector('.user-type-option.faculty');
-    const usernameLabel = document.getElementById('username_label');
-    const userTypeInput = document.getElementById('user_type');
+<style>
+.user-type-toggle {
+    width: 100%;
+}
+
+.toggle-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    position: relative;
+    height: 48px;
+    display: flex;
+    padding: 4px;
+}
+
+.toggle-container input[type="radio"] {
+    display: none;
+}
+
+.toggle-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    z-index: 1;
+    cursor: pointer;
+    color: #404a61;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    user-select: none;
+    position: relative;
+}
+
+.toggle-option i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+    color: inherit;
+}
+
+.slider {
+    position: absolute;
+    height: calc(100% - 8px);
+    width: calc(50% - 4px);
+    left: 4px;
+    top: 4px;
+    background-color: var(--primary-color);
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    z-index: 0;
+}
+
+/* Student selected */
+input[type="radio"]#student:checked ~ .slider {
+    transform: translateX(0);
+}
+
+input[type="radio"]#student:checked ~ .toggle-option.student {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+input[type="radio"]#student:not(:checked) ~ .toggle-option.student {
+    color: #404a61;
+}
+
+/* Faculty selected */
+input[type="radio"]#faculty:checked ~ .slider {
+    transform: translateX(100%);
+}
+
+input[type="radio"]#faculty:checked ~ .toggle-option.faculty {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+input[type="radio"]#faculty:not(:checked) ~ .toggle-option.faculty {
+    color: #404a61;
+}
+
+.toggle-container:focus-within {
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    border-color: var(--primary-color);
+}
+
+@media (max-width: 576px) {
+    .toggle-option {
+        font-size: 0.9rem;
+    }
     
-    if (type === 'student') {
-        studentBtn.classList.add('selected');
-        facultyBtn.classList.remove('selected');
-        usernameLabel.textContent = 'USN';
-        userTypeInput.value = 'student';
-    } else {
-        facultyBtn.classList.add('selected');
-        studentBtn.classList.remove('selected');
-        usernameLabel.textContent = 'Username';
-        userTypeInput.value = 'faculty';
+    .toggle-option i {
+        font-size: 1rem;
+        margin-right: 6px;
     }
 }
-</script>
+</style>
 {% endblock %} 

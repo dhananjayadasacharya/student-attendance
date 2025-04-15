@@ -3,70 +3,93 @@
 {% block title %}Student Dashboard{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col">
-        <h2>Welcome, {{ session.get('name') }}</h2>
-        <p class="text-muted">USN: {{ session.get('usn') }}</p>
+<div class="dashboard-header">
+    <div class="d-flex justify-content-between align-items-start flex-wrap">
+        <div>
+            <h1>Student Dashboard</h1>
+            <p>Welcome back, {{ session.get('name', '') }}</p>
+            <p class="student-usn">USN: {{ session.get('usn', '') }}</p>
+        </div>
+        <p class="dashboard-date">{{ now.strftime('%A, %B %d, %Y') }}</p>
     </div>
 </div>
 
-<div class="row">
+<div class="row g-4">
     {% for subject in attendance_data %}
-    <div class="col-md-4 mb-4">
+    <div class="col-md-4">
         <div class="card h-100">
-            <div class="card-header">
-                <h5 class="card-title mb-0">{{ subject.subject_name }}</h5>
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <div class="text-center">
-                            <h6>Total Classes</h6>
-                            <h3>{{ subject.total_classes }}</h3>
-                        </div>
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="feature-icon {% if subject.attendance_percentage >= 75 %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="fas fa-book {% if subject.attendance_percentage >= 75 %}text-success{% else %}text-danger{% endif %}"></i>
                     </div>
-                    <div class="col-6">
-                        <div class="text-center">
-                            <h6>Attended</h6>
-                            <h3>{{ subject.present_count }}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="progress mb-3">
-                    <div class="progress-bar attendance {% if subject.attendance_percentage >= 75 %}bg-success{% else %}bg-danger{% endif %}"
-                         role="progressbar"
-                         style="width: {{ subject.attendance_percentage }}%"
-                         aria-valuenow="{{ subject.attendance_percentage }}"
-                         aria-valuemin="0"
-                         aria-valuemax="100">
-                        {{ "%.1f"|format(subject.attendance_percentage) }}%
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <small class="text-muted">
-                        {% if subject.attendance_percentage >= 75 %}
-                        You're doing great! Keep it up!
-                        {% else %}
-                        Your attendance is below 75%. Please improve your attendance.
-                        {% endif %}
-                    </small>
+                    <h5 class="card-title mb-0">{{ subject.subject_name }}</h5>
                 </div>
                 
-                <!-- Absent Dates -->
-                <div class="mt-3">
-                    <h6>Absent Dates:</h6>
-                    <div class="absent-dates" style="max-height: 150px; overflow-y: auto;">
-                        {% set found = false %}
+                <div class="attendance-stats mb-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded-3 text-center">
+                                <h6 class="text-muted mb-2">Total Classes</h6>
+                                <h3 class="mb-0" style="color: var(--text-primary);">{{ subject.total_classes }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded-3 text-center">
+                                <h6 class="text-muted mb-2">Attended</h6>
+                                <h3 class="mb-0" style="color: var(--text-primary);">{{ subject.present_count }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="attendance-progress mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Attendance Percentage</span>
+                        <span class="fw-semibold {% if subject.attendance_percentage >= 75 %}text-success{% else %}text-danger{% endif %}">
+                            {{ "%.1f"|format(subject.attendance_percentage) }}%
+                        </span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar {% if subject.attendance_percentage >= 75 %}bg-success{% else %}bg-danger{% endif %}"
+                             role="progressbar"
+                             style="width: {{ subject.attendance_percentage }}%"
+                             aria-valuenow="{{ subject.attendance_percentage }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <small class="{% if subject.attendance_percentage >= 75 %}text-success{% else %}text-danger{% endif %}">
+                            {% if subject.attendance_percentage >= 75 %}
+                            <i class="fas fa-check-circle me-1"></i>You're doing great! Keep it up!
+                            {% else %}
+                            <i class="fas fa-exclamation-circle me-1"></i>Your attendance is below 75%. Please improve.
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="absent-dates mt-4">
+                    <h6 class="mb-3" style="color: var(--text-primary);">
+                        <i class="fas fa-calendar-times me-2"></i>Absent Dates
+                    </h6>
+                    <div class="absent-dates-list" style="max-height: 150px; overflow-y: auto;">
+                        {% set has_absences = false %}
                         {% for absent in absent_dates %}
                             {% if absent.subject_name == subject.subject_name %}
-                                {% set found = true %}
-                                <div class="alert alert-danger py-1 mb-2">
-                                    {{ absent.date.strftime('%d %b %Y') }}
+                                {% set has_absences = true %}
+                                <div class="absent-date-item mb-2 p-2 rounded-3 bg-danger bg-opacity-10">
+                                    <i class="fas fa-calendar-day me-2 text-danger"></i>
+                                    <span class="text-danger">{{ absent.date.strftime('%d %b %Y') }}</span>
                                 </div>
                             {% endif %}
                         {% endfor %}
-                        {% if not found %}
-                            <p class="text-muted small">No absences recorded</p>
+                        {% if not has_absences %}
+                            <div class="text-center py-3">
+                                <i class="fas fa-check-circle text-success mb-2" style="font-size: 1.5rem;"></i>
+                                <p class="text-muted small mb-0">No more absences recorded</p>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -75,4 +98,115 @@
     </div>
     {% endfor %}
 </div>
-{% endblock %} 
+
+<div class="mb-5"></div>
+
+<style>
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-icon i {
+    font-size: 1.25rem;
+}
+
+.attendance-stats .col-6 {
+    transition: transform 0.2s ease;
+}
+
+.attendance-stats .col-6:hover {
+    transform: translateY(-2px);
+}
+
+.absent-dates-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.absent-dates-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.absent-dates-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.absent-dates-list::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 3px;
+}
+
+.absent-date-item {
+    transition: transform 0.2s ease;
+}
+
+.absent-date-item:hover {
+    transform: translateX(4px);
+}
+
+.dashboard-header {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.student-usn {
+    font-size: 1rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+.dashboard-date {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+    text-align: right;
+}
+
+@media (max-width: 576px) {
+    .dashboard-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .dashboard-header p,
+    .dashboard-date {
+        font-size: 1rem;
+    }
+
+    .student-usn {
+        font-size: 0.9rem;
+    }
+
+    .dashboard-date {
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: left;
+    }
+}
+</style>
+
+<script>
+// Display current date
+const currentDate = new Date();
+const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+document.getElementById('current-date').textContent = currentDate.toLocaleDateString('en-US', options);
+</script>
+{% endblock %}

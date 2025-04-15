@@ -5,16 +5,16 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 
-app = Flask(__name__)
-
 # Load environment variables
 load_dotenv()
 
-# MySQL Configuration
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '#1Parandhama'
-app.config['MYSQL_DB'] = 'attendance'
+app = Flask(__name__)
+
+# MySQL Configuration using environment variables
+app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
+app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
+app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
+app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 # Initialize MySQL
@@ -29,6 +29,10 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # Clear any existing session when accessing login page
+    if request.method == 'GET':
+        session.clear()
+    
     if request.method == 'POST':
         try:
             user_type = request.form.get('user_type')
@@ -48,19 +52,21 @@ def login():
             else:
                 cur.execute("SELECT * FROM student WHERE usn = %s", [username])
                 user = cur.fetchone()
+                
                 if user and check_password_hash(user['password'], password):
                     session['user_id'] = user['stu_id']
                     session['user_type'] = 'student'
                     session['name'] = user['name']
                     session['usn'] = user['usn']
                     return redirect(url_for('student_dashboard'))
-            
-            flash('Invalid username or password')
-            return redirect(url_for('login'))
+                
+            session.clear()
+            flash('Invalid username or password', 'danger')
+            # return render_template('login.html')
         except Exception as e:
             print(f"Error: {str(e)}")
-            flash('An error occurred during login')
-            return redirect(url_for('login'))
+            flash('An error occurred during login', 'danger')
+            return render_template('login.html')
         finally:
             cur.close()
     
@@ -83,7 +89,7 @@ def faculty_dashboard():
             ORDER BY c.name, s.subject_name
         """, [session['user_id']])
         subjects = cur.fetchall()
-        return render_template('faculty_dashboard.html', subjects=subjects)
+        return render_template('faculty_dashboard.html', subjects=subjects, now=datetime.now())
     except Exception as e:
         print(f"Error: {str(e)}")
         flash('An error occurred while loading the dashboard')
@@ -138,7 +144,8 @@ def student_dashboard():
 
         return render_template('student_dashboard.html', 
                              attendance_data=attendance_data,
-                             absent_dates=absent_dates)
+                             absent_dates=absent_dates,
+                             now=datetime.now())
     except Exception as e:
         print(f"Error: {str(e)}")
         flash('An error occurred while loading the dashboard')
@@ -370,4 +377,4 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)

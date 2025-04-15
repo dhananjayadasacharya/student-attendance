@@ -3,19 +3,26 @@
 {% block title %}Faculty Dashboard{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col">
-        <h2>Welcome, {{ session.get('name') }}</h2>
+<div class="dashboard-header">
+    <div class="d-flex justify-content-between align-items-start flex-wrap">
+        <div>
+            <h1>Faculty Dashboard</h1>
+            <p>Welcome back, {{ session.get('name', '') }}</p>
+        </div>
+        <p class="dashboard-date">{{ now.strftime('%A, %B %d, %Y') }}</p>
     </div>
 </div>
 
-<div class="row mb-4">
+<div class="row g-4">
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Take Attendance</h5>
-            </div>
-            <div class="card-body">
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="feature-icon bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="fas fa-clipboard-check text-primary"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Take Attendance</h5>
+                </div>
                 <form action="{{ url_for('take_attendance') }}" method="GET">
                     <div class="mb-3">
                         <label for="subject_id" class="form-label">Select Subject</label>
@@ -30,14 +37,16 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label for="class_id" class="form-label">Select Class</label>
                         <select class="form-select" id="class_id" name="class_id" required disabled>
                             <option value="">Choose Class</option>
                         </select>
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Take Attendance</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Take Attendance
+                        </button>
                     </div>
                 </form>
             </div>
@@ -45,11 +54,14 @@
     </div>
 
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Edit Attendance</h5>
-            </div>
-            <div class="card-body">
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="feature-icon bg-warning bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="fas fa-edit text-warning"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Edit Attendance</h5>
+                </div>
                 <form action="{{ url_for('edit_attendance') }}" method="GET">
                     <div class="mb-3">
                         <label for="edit_subject_id" class="form-label">Select Subject</label>
@@ -70,12 +82,14 @@
                             <option value="">Choose Class</option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label for="date" class="form-label">Select Date</label>
                         <input type="date" class="form-control" id="date" name="date" required>
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-warning">Edit Attendance</button>
+                        <button type="submit" class="btn btn-warning text-white">
+                            <i class="fas fa-edit me-2"></i>Edit Attendance
+                        </button>
                     </div>
                 </form>
             </div>
@@ -83,11 +97,14 @@
     </div>
 
     <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">View Reports</h5>
-            </div>
-            <div class="card-body">
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="feature-icon bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                        <i class="fas fa-chart-bar text-info"></i>
+                    </div>
+                    <h5 class="card-title mb-0">View Reports</h5>
+                </div>
                 <form action="{{ url_for('view_reports') }}" method="GET">
                     <div class="mb-3">
                         <label for="report_subject_id" class="form-label">Select Subject</label>
@@ -102,7 +119,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label for="report_class_id" class="form-label">Select Class</label>
                         <select class="form-select" id="report_class_id" name="class_id" required disabled>
                             <option value="">Choose Class</option>
@@ -110,13 +127,110 @@
                     </div>
                     <input type="hidden" name="report_type" value="class">
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-info">View Report</button>
+                        <button type="submit" class="btn btn-info text-white">
+                            <i class="fas fa-chart-bar me-2"></i>View Report
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-icon i {
+    font-size: 1.25rem;
+}
+
+.form-select, .form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.625rem 1rem;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.btn {
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    border-radius: 8px;
+}
+
+.btn-warning {
+    background-color: #F59E0B;
+    border-color: #F59E0B;
+}
+
+.btn-warning:hover {
+    background-color: #D97706;
+    border-color: #D97706;
+}
+
+.btn-info {
+    background-color: #0EA5E9;
+    border-color: #0EA5E9;
+}
+
+.btn-info:hover {
+    background-color: #0284C7;
+    border-color: #0284C7;
+}
+
+.dashboard-header {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.dashboard-date {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+    text-align: right;
+}
+
+@media (max-width: 576px) {
+    .dashboard-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .dashboard-header p,
+    .dashboard-date {
+        font-size: 1rem;
+    }
+
+    .dashboard-date {
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: left;
+    }
+}
+</style>
 
 <script>
 // Function to populate class dropdown based on selected subject
@@ -163,5 +277,10 @@ document.getElementById('report_subject_id').addEventListener('change', function
 
 // Set minimum date to today for the date input
 document.getElementById('date').valueAsDate = new Date();
+
+// Display current date
+const currentDate = new Date();
+const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+document.getElementById('current-date').textContent = currentDate.toLocaleDateString('en-US', options);
 </script>
 {% endblock %} 
