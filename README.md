@@ -30,7 +30,7 @@ A web-based attendance management system built with Flask and MySQL, featuring s
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/dhananjayadasacharya/student-attendance.git
 cd student-attendance
 ```
 

@@ -62,7 +62,7 @@ def login():
                 
             session.clear()
             flash('Invalid username or password', 'danger')
-            # return render_template('login.html')
+            return render_template('login.html')
         except Exception as e:
             print(f"Error: {str(e)}")
             flash('An error occurred during login', 'danger')
